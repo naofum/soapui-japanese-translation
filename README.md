@@ -11,7 +11,7 @@
 1. Copy pleiades-config.xml into plugins/jp.sourceforge.mergedoc.pleiades/conf directory
 1. Copy bundle_ja.properties into plugins/jp.sourceforge.mergedoc.pleiades/conf/additions directory
 1. Open and edit soapui.bat. Adds next one line after run soapui comment.
-set JAVA_OPTS=%JAVA_OPTS% -javaagent:../plugins/jp.sourceforge.mergedoc.pleiades/pleiades.jar
+ set JAVA_OPTS=%JAVA_OPTS% -javaagent:../plugins/jp.sourceforge.mergedoc.pleiades/pleiades.jar
 
 ## License: GPLv3
 
