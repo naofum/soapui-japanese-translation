@@ -1,0 +1,785 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+###############################################################################
+#
+# Copyright (C) 2015  Naofumi Fukue
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+###############################################################################
+-->
+<pleiades>
+
+	<!-- Pleades AOP package -->
+	<property name="pleiades" value="jp.sourceforge.mergedoc.pleiades.aspect"/>
+
+	<!-- Translation class -->
+	<property name="translation.class" value="?{pleiades}.resource.Translations"/>
+
+	<!-- Analyses class -->
+	<property name="analyses.class" value="?{pleiades}.Analyses"/>
+
+	<!--
+	###########################################################################
+	  AOP exclude package (delimited by new line)
+	###########################################################################
+	-->
+
+	<excludePackage>
+
+		org.springframework.roo
+		org.springframework.uaa
+		com.mysql.jdbc
+		org.codehaus.groovy.reflection
+		org.codehaus.groovy.runtime.callsite
+		groovy.lang
+		sun.instrument
+
+	</excludePackage>
+
+	<!--
+	###########################################################################
+	  translation：call methods (editPoint="call")
+	###########################################################################
+	-->
+
+	<!-- General (after) -->
+	<pointCut editPoint="call" timing="around">
+		<advice><![CDATA[
+			$1 = ?{translation.class}.translate($1, null);
+			$_ = $proceed($$);
+		]]></advice>
+
+		<!-- 2.Table Header -->
+		<jointPoint className="javax.swing.table.TableColumn" methodName="setHeaderValue"/>
+		<!-- 7.Tab Header -->
+		<jointPoint
+			className="javax.swing.JTabbedPane"
+			methodName="addTab"
+			descriptor="(Ljava/lang/String;Ljava/awt/Component;)V"/>
+		<!-- 8.Preference -->
+		<jointPoint
+			className="com.eviware.soapui.support.types.StringToStringMap"
+			methodName="put">
+			<includeWhere className="com.eviware.soapui.actions.AnnotatedSettings"
+				methodName="getValues"/>
+			<includeWhere className="com.eviware.soapui.actions.ProxyPrefs"
+				methodName="getValues"/>
+			<includeWhere className="com.eviware.soapui.actions.UIPrefs"
+				methodName="getValues"/>
+			<includeWhere className="com.eviware.soapui.actions.EditorPrefs"
+				methodName="getValues"/>
+			<includeWhere className="com.eviware.soapui.actions.ToolsPrefs"
+				methodName="getValues"/>
+			<includeWhere className="com.eviware.soapui.actions.GlobalPropertiesPrefs"
+				methodName="getValues"/>
+			<includeWhere className="com.eviware.soapui.actions.SecurityScansPrefs"
+				methodName="getValues"/>
+		</jointPoint>
+		<!-- 8.Preference -->
+		<jointPoint
+			className="com.eviware.soapui.support.types.StringToStringMap"
+			methodName="get">
+			<includeWhere className="com.eviware.soapui.actions.AnnotatedSettingsPrefs"
+				methodName="storeValues"/>
+			<includeWhere className="com.eviware.soapui.actions.ProxyPrefs"
+				methodName="storeValues"/>
+			<includeWhere className="com.eviware.soapui.actions.UIPrefs"
+				methodName="storeValues"/>
+			<includeWhere className="com.eviware.soapui.actions.EditorPrefs"
+				methodName="storeValues"/>
+			<includeWhere className="com.eviware.soapui.actions.ToolsPrefs"
+				methodName="storeValues"/>
+			<includeWhere className="com.eviware.soapui.actions.GlobalPropertiesPrefs"
+				methodName="storeValues"/>
+			<includeWhere className="com.eviware.soapui.actions.SecurityScansPrefs"
+				methodName="storeValues"/>
+		</jointPoint>
+		<!-- 8.Preference -->
+		<jointPoint
+			className="com.eviware.soapui.support.components.SimpleForm"
+			methodName="append">
+			<includeWhere className="com.eviware.soapui.actions.AnnotatedSettingsPrefs"
+				methodName="buildForm"/>
+			<includeWhere className="com.eviware.soapui.actions.ProxyPrefs"
+				methodName="addProxySettingRadioButtons"/>
+			<includeWhere className="com.eviware.soapui.actions.EditorPrefs"
+				methodName="getForm"/>
+		</jointPoint>
+
+	</pointCut>
+
+	<pointCut editPoint="call" timing="around">
+		<advice><![CDATA[
+			$2 = ?{translation.class}.translate($2, null);
+			$_ = $proceed($$);
+		]]></advice>
+
+		<!-- 11.Metric (in Preferences) -->
+		<jointPoint
+			className="com.eviware.soapui.support.components.MetricsPanel$MetricsSection"
+			methodName="addMetric"/>
+			<!-- descriptor="(Ljavax/swing/ImageIcon;Ljava/lang/String;)Z"/ -->
+
+	</pointCut>
+
+	<pointCut editPoint="call" timing="around">
+		<advice><![CDATA[
+			$_ = $proceed($$);
+			$_ = ?{translation.class}.translate($_, null);
+		]]></advice>
+
+		<!-- 1.JDK Swing Menu -->
+		<jointPoint className="javax.swing.JMenuItem" methodName="getText"/>
+
+	</pointCut>
+
+	<!-- 6.IconMenuBar -->
+	<pointCut editPoint="call" timing="around">
+		<advice><![CDATA[
+			$1 = ?{translation.class}.translate($1, null);
+			$4 = ?{translation.class}.translate($4, null);
+			$_ = $proceed($$);
+		]]></advice>
+
+		<jointPoint
+			className="javax.swing.JTabbedPane"
+			methodName="addTab"
+			descriptor="(Ljava/lang/String;Ljavax/swing/Icon;Ljava/awt/Component;Ljava/lang/String;)V"/>
+
+	</pointCut>
+
+	<!-- 5.description -->
+	<pointCut editPoint="call" timing="around">
+		<advice><![CDATA[
+			if ($1.equals(javax.swing.Action.NAME) || $1.equals(javax.swing.Action.SHORT_DESCRIPTION))
+				$2 = ?{translation.class}.translate($2, null);
+			$_ = $proceed($$);
+		]]></advice>
+
+		<jointPoint className="com.eviware.soapui.SoapUI$ExitAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.SoapUI$ExitWithoutSavingAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.SoapUI$ShowStarterPageAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.SoapUI$ToolbarForumSearchAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.SoapUI$SearchForumAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.SoapUI$AboutAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.SoapUI$SavePreferencesAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.SoapUI$ImportPreferencesAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.SoapUI$PreferencesActionDelegate" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.SoapUI$NewProjectActionDelegate" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.SoapUI$ImportWsdlProjectActionDelegate" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.SoapUI$SaveAllActionDelegate" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.SoapUI$ApplyProxyButtonAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.SoapUI$MaximizeDesktopAction" methodName="putValue"/>
+
+		<jointPoint className="com.eviware.soapui.actions.SoapUIPreferencesAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.actions.ShowSystemPropertiesAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.actions.StartHermesJMSButtonAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.actions.VersionUpdateAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.actions.XQueryXPathTesterAction$RunAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.actions.XQueryXPathTesterAction$DeclareNSAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.actions.autoupdate.VersionUpdateAction" methodName="putValue"/>
+
+		<jointPoint className="com.eviware.soapui.impl.rest.actions.oauth.GetOAuthAccessTokenAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.rest.actions.oauth.RefreshOAuthAccessTokenAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.rest.panels.request.views.content.RestRequestContentView$UpdateRestParamsAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.rest.panels.request.views.content.RestRequestContentView$CreateDefaultRepresentationAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.rest.panels.resource.RestParamsTable$UpdateParamsAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.rest.panels.resource.RestParamsTable$UseDefaultParamsAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.rest.panels.service.RestServiceDesktopPanel$BackwardAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.rest.panels.service.RestServiceDesktopPanel$ForwardAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.rest.panels.service.RestServiceDesktopPanel$RecreateWadlAction" methodName="putValue"/>
+
+		<jointPoint className="com.eviware.soapui.impl.support.actions.ShowOnlineHelpAction" methodName="putValue"/>
+
+		<jointPoint className="com.eviware.soapui.impl.support.panels.AbstractHttpRequestDesktopPanel$SubmitAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.support.panels.AbstractHttpRequestDesktopPanel$CancelAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.support.panels.AbstractHttpRequestDesktopPanel$ChangeToTabsAction" methodName="putValue"/>
+
+		<jointPoint className="com.eviware.soapui.impl.wsdl.actions.iface.AbstractSwingAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.actions.project.SimpleDialog" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.actions.request.CreateEmptyRequestAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.actions.request.RecreateRequestAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.actions.support.OpenUrlAction" methodName="putValue"/>
+
+		<jointPoint className="com.eviware.soapui.impl.wsdl.endpoint.DefaultEndpointStrategyConfigurationPanel$AddAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.endpoint.DefaultEndpointStrategyConfigurationPanel$AssignAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.endpoint.DefaultEndpointStrategyConfigurationPanel$DeleteAction" methodName="putValue"/>
+
+		<jointPoint className="com.eviware.soapui.impl.wsdl.loadtest.assertions.AbstractLoadTestAssertion$RenameAssertionAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.loadtest.assertions.AbstractLoadTestAssertion$ConfigureAssertionAction" methodName="putValue"/>
+
+		<jointPoint className="com.eviware.soapui.impl.wsdl.loadtest.data.actions.ExportLoadTestLogAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.loadtest.data.actions.ExportSamplesHistoryAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.loadtest.data.actions.ExportStatisticsAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.loadtest.data.actions.ExportStatisticsHistoryAction" methodName="putValue"/>
+
+		<jointPoint className="com.eviware.soapui.impl.wsdl.mock.dispatch.QueryMatchMockOperationDispatcher$AddAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.mock.dispatch.QueryMatchMockOperationDispatcher$CopyAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.mock.dispatch.QueryMatchMockOperationDispatcher$DeleteAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.mock.dispatch.QueryMatchMockOperationDispatcher$RenameAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.mock.dispatch.QueryMatchMockOperationDispatcher$DeclareNamespacesAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.mock.dispatch.QueryMatchMockOperationDispatcher$RunAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.mock.dispatch.QueryMatchMockOperationDispatcher$ExtractFromCurrentAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.mock.dispatch.ScriptMockOperationDispatcher" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.mock.dispatch.XPathMockOperationDispatcher" methodName="putValue"/>
+
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.iface.WsdlInterfaceDesktopPanel$BackwardAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.iface.WsdlInterfaceDesktopPanel$ForwardAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.iface.WsdlInterfaceDesktopPanel$RunWSIAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.iface.WsdlInterfaceDesktopPanel$WSIOptionsAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.iface.WsdlInterfaceDesktopPanel$SaveWsiReportAction" methodName="putValue"/>
+
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.loadtest.JLoadTestAssertionsTable$AddLoadTestAssertionAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.loadtest.JLoadTestAssertionsTable$ConfigureAssertionAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.loadtest.JLoadTestAssertionsTable$RemoveAssertionAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.loadtest.JLoadTestLogTable$ClearErrorsAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.loadtest.WsdlLoadTestDesktopPanel$RunLoadTestAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.loadtest.WsdlLoadTestDesktopPanel$ResetAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.loadtest.WsdlLoadTestDesktopPanel$ShowStatisticsGraphAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.loadtest.WsdlLoadTestDesktopPanel$ShowTestTimesGraphAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.loadtest.WsdlLoadTestDesktopPanel$CancelRunTestCaseAction" methodName="putValue"/>
+
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.mock.WsdlMockServiceDesktopPanel$RunMockServiceAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.mock.WsdlMockServiceDesktopPanel$ShowWsdlAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.mock.WsdlMockServiceDesktopPanel$StopMockServiceAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.mock.WsdlMockServiceDesktopPanel$SetLogOptionsAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.mock.WsdlMockServiceDesktopPanel$ClearLogAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.mockoperation.actions.CreateEmptyWsdlMockResponseAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.mockoperation.actions.CreateFaultWsdlMockResponseAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.mockoperation.actions.RecreateMockResponseAction" methodName="putValue"/>
+
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.project.WsdlProjectDesktopPanel$AfterLoadScriptRunAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.project.WsdlProjectDesktopPanel$BeforeSaveScriptRunAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.project.WsdlProjectTestSuitesTabPanel$RunAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.project.WsdlProjectTestSuitesTabPanel$CancelAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.project.WSSTabPanel$AddOutgoingWssAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.project.WSSTabPanel$RemoveOutgoingWssAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.project.WSSTabPanel$AddOutgoingEntryAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.project.WSSTabPanel$RemoveOutgoingEntryAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.project.WSSTabPanel$MoveOutgoingEntryUpAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.project.WSSTabPanel$MoveOutgoingEntryDownAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.project.WSSTabPanel$AddIncomingWssAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.project.WSSTabPanel$RemoveIncomingWssAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.project.WSSTabPanel$ImportWssSettingsAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.project.WSSTabPanel$AddCryptoAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.project.WSSTabPanel$RemoveCryptoAction" methodName="putValue"/>
+
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.testcase.JTestRunLog$SetLogOptionsAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.testcase.JTestRunLog$ClearLogAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.testcase.JTestRunLog$ExportLogAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.testcase.JTestStepList$InsertTestStepAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.testcase.TestOnDemandPanel$SendTestCaseAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.testcase.WsdlTestCaseDesktopPanel$RunTestCaseAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.testcase.WsdlTestCaseDesktopPanel$CancelRunTestCaseAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.testcase.WsdlTestCaseDesktopPanel$AddWsdlTestStepAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.testcase.actions.SetCredentialsAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.testcase.actions.SetEndpointAction" methodName="putValue"/>
+
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.AssertionsPanel$ConfigureAssertionAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.AssertionsPanel$RemoveAssertionAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.AssertionsPanel$MoveAssertionUpAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.AssertionsPanel$MoveAssertionDownAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.GotoStepDesktopPanel$AddAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.GotoStepDesktopPanel$CopyAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.GotoStepDesktopPanel$DeleteAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.GotoStepDesktopPanel$RenameAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.GotoStepDesktopPanel$DeclareNamespacesAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.GotoStepDesktopPanel$RunAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.GotoStepDesktopPanel$TestConditionAction" methodName="putValue"/>
+
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.GroovyScriptStepDesktopPanel$RunAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.JdbcRequestTestStepDesktopPanel$TestConnectionAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.JdbcRequestTestStepDesktopPanel$SubmitAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.JdbcRequestTestStepDesktopPanel$ChangeToTabsAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.JdbcRequestTestStepDesktopPanel$CancelAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.PropertiesStepDesktopPanel$SetPropertiesSourceAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.PropertiesStepDesktopPanel$ReloadPropertiesFromSourceAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.PropertiesStepDesktopPanel$SetPropertiesTargetAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.PropertyTransfersDesktopPanel$AddAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.PropertyTransfersDesktopPanel$CopyAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.PropertyTransfersDesktopPanel$DeleteAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.PropertyTransfersDesktopPanel$ClearLogAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.PropertyTransfersDesktopPanel$RenameAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.PropertyTransfersDesktopPanel$DisableAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.PropertyTransfersDesktopPanel$DeclareNamespacesAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.PropertyTransfersDesktopPanel$RunAllAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.PropertyTransfersDesktopPanel$RunAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.WsdlMockResponseStepDesktopPanel$SelectFromCurrentAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.WsdlMockResponseStepDesktopPanel$DeclareNamespacesAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.WsdlRunTestCaseStepDesktopPanel$RunAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.WsdlRunTestCaseStepDesktopPanel$OpenTestCaseAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.WsdlRunTestCaseStepDesktopPanel$OptionsAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.WsdlRunTestCaseStepDesktopPanel$CancelRunTestCaseAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.amf.AMFRequestTestStepDesktopPanel$RunAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.amf.AMFRequestTestStepDesktopPanel$SubmitAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.amf.AMFRequestTestStepDesktopPanel$ChangeToTabsAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.amf.AMFRequestTestStepDesktopPanel$CancelAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.support.AddParamAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.support.MovePropertyDownAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.support.MovePropertyUpAction" methodName="putValue"/>
+
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.support.PropertyHolderTable$RemovePropertyAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.support.PropertyHolderTable$ClearPropertiesAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.support.PropertyHolderTable$LoadPropertiesAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.support.PropertyHolderTable$SavePropertiesAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.support.PropertyHolderTable$SortPropertiesAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.teststeps.support.RemovePropertyAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.testsuite.WsdlTestSuiteDesktopPanel$RunAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.panels.testsuite.WsdlTestSuiteDesktopPanel$CancelAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.support.wss.support.SAMLAttributeValuesTable$AddAttributeValueAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.support.wss.support.SAMLAttributeValuesTable$RemoveAttributeValueAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.support.wss.support.WSPartsTable$AddPartAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.support.wss.support.WSPartsTable$RemovePartAction" methodName="putValue"/>
+
+		<jointPoint className="com.eviware.soapui.impl.wsdl.teststeps.actions.AddAssertionAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.teststeps.actions.CreateRequestAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.teststeps.assertions.basic.AssertionConfigurationDialog$DeclareNamespacesFromCurrentAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.teststeps.assertions.basic.AssertionConfigurationDialog$TestPathAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.teststeps.assertions.basic.AssertionConfigurationDialog$SelectFromCurrentAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.teststeps.assertions.basic.GroovyScriptAssertion$RunAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.teststeps.assertions.basic.XQueryContainsAssertion$DeclareNamespacesFromCurrentAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.teststeps.assertions.basic.XQueryContainsAssertion$TestPathAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.impl.wsdl.teststeps.assertions.basic.XQueryContainsAssertion$SelectFromCurrentAction" methodName="putValue"/>
+
+		<jointPoint className="com.eviware.soapui.model.tree.nodes.PropertiesTreeNode$AddPropertyAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.model.tree.nodes.PropertyTreeNode$SetPropertyValueAction" methodName="putValue"/>
+
+		<jointPoint className="com.eviware.soapui.security.actions.CloneParametersAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.security.assertion.SensitiveInfoExposureAssertion$AddTokenAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.security.assertion.SensitiveInfoExposureAssertion$RemoveTokenAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.security.log.JFunctionalTestRunLog$ClearLogAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.security.log.JFunctionalTestRunLog$ExportLogAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.security.log.JSecurityTestRunLog$SetLogOptionsAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.security.log.JSecurityTestRunLog$ClearLogAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.security.log.JSecurityTestRunLog$ExportLogAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.security.panels.JSecurityTestTestStepList$OpenTestStepEditorAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.security.panels.JSecurityTestTestStepList$AddSecurityScanAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.security.panels.JSecurityTestTestStepList$EnableDisableSecurityScan" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.security.panels.JSecurityTestTestStepList$ConfigureSecurityScanAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.security.panels.JSecurityTestTestStepList$RemoveSecurityScanAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.security.panels.JSecurityTestTestStepList$ExpandTreeAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.security.panels.JSecurityTestTestStepList$CollapsTreeAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.security.panels.ProjectSensitiveInformationPanel$AddTokenAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.security.panels.ProjectSensitiveInformationPanel$RemoveTokenAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.security.panels.SecurityTestDesktopPanel$RunSecurityTestAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.security.panels.SecurityTestDesktopPanel$CancelRunSecuritytestAction" methodName="putValue"/>
+
+		<jointPoint className="com.eviware.soapui.security.ui.InvalidTypesTable$RemoveTypeAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.security.ui.InvalidTypesTable$AddNewTypeAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.security.ui.MaliciousAttachmentMutationsPanel$AddFileAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.security.ui.MaliciousAttachmentMutationsPanel$GenerateFileAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.security.ui.MaliciousAttachmentMutationsPanel$RemoveReplacementFileAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.security.ui.MaliciousAttachmentMutationsPanel$RemoveGeneratedFileAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.security.ui.MaliciousAttachmentMutationsPanel$HelpAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.security.ui.SecurityCheckedParametersTablePanel$AddNewParameterAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.security.ui.SecurityCheckedParametersTablePanel$RemoveParameterAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.security.ui.SecurityCheckedParametersTablePanel$CopyParameterAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.security.ui.XmlBombSecurityScanConfigPanel$PreviousAttachement" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.security.ui.XmlBombSecurityScanConfigPanel$NextAttachement" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.security.ui.XmlBombSecurityScanConfigPanel$SaveAttachement" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.security.ui.XmlBombSecurityScanConfigPanel$AddXmlAttachement" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.security.ui.XmlBombSecurityScanConfigPanel$RemoveAttachement" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.security.ui.XPathCellRender$SaveXPathAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.security.ui.XPathCellRender$CancelXPathAction" methodName="putValue"/>
+
+		<jointPoint className="com.eviware.soapui.support.action.support.WrapperSoapUIAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.support.action.swing.SwingActionDelegate" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.support.action.swing.SwingMultiActionDelegate" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.support.actions.ChangeSplitPaneOrientationAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.support.components.GroovyEditorComponent$InsertCodeAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.support.components.JCollapsiblePanel$ToggleAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.support.components.JInspectorPanelImpl$SelectInspectorAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.support.components.ModelItemListDesktopPanel$RemoveAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.support.components.ModelItemListDesktopPanel$HighlightAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.support.components.WebViewNavigationBar$BackAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.support.components.WebViewNavigationBar$ForwardAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.support.components.WebViewNavigationBar$ReloadAction" methodName="putValue"/>
+
+		<jointPoint className="com.eviware.soapui.support.editor.inspectors.amfheader.AMFHeadersInspector$RemoveAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.support.editor.inspectors.amfheader.AMFHeadersInspector$AddAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.support.editor.inspectors.auth.OAuth2ScriptsEditor$AddScriptAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.support.editor.inspectors.auth.OAuth2ScriptsEditor$RemoveScriptAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.support.editor.inspectors.auth.OAuth2ScriptsEditor$TestScriptsAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.support.editor.inspectors.httpheaders.HttpHeadersInspector$RemoveAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.support.editor.inspectors.httpheaders.HttpHeadersInspector$AddAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.support.editor.inspectors.jms.property.JMSPropertyInspector$RemoveAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.support.editor.inspectors.jms.property.JMSPropertyInspector$AddAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.support.editor.inspectors.script.MockResponseScriptInspector$RunScriptAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.support.monitor.MonitorPanel$GCAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.support.xml.actions.FormatXmlAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.support.xml.actions.GoToLineAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.ui.desktop.standalone.StandaloneDesktop$CloseCurrentAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.ui.desktop.standalone.StandaloneDesktop$CloseOtherAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.ui.desktop.standalone.StandaloneDesktop$CloseAllAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.ui.support.AbstractMockResponseDesktopPanel$ChangeToTabsAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.x.form.support.XFormMultiSelectList$SelectAllAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.x.form.support.XFormMultiSelectList$UnselectAllAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.x.impl.swing.SwingXFormDialogBuilder" methodName="putValue"/>
+
+		<jointPoint className="com.eviware.soapui.RecentItemsListener$ClearProjectsAction" methodName="putValue"/>
+		<jointPoint className="com.eviware.soapui.RecentItemsListener$ClearWorkspacesAction" methodName="putValue"/>
+		<!-- jointPoint className="javax.swing.AbstractAction" methodName="putValue"/ -->
+	
+	</pointCut>
+
+
+	<!--
+	###########################################################################
+	  translation：execute methods (editPoint="execution")
+	###########################################################################
+	====================================
+	  before advice
+	====================================
+	-->
+
+	<!-- Normal transration (before, 1st arg) -->
+	<pointCut editPoint="execution" timing="before">
+		<advice><![CDATA[
+			$1 = ?{translation.class}.translate($1, null);
+		]]></advice>
+
+		<!-- 3.ErrorMessage dialog -->
+		<jointPoint
+			className="com.eviware.soapui.support.UISupport"
+			methodName="showErrorMessage"
+			descriptor="(Ljava/lang/String;)V"/>
+		<!-- 4.Inspector -->
+		<jointPoint
+			className="com.eviware.soapui.support.components.JInspectorPanelImpl"
+			methodName="setCurrentInspector"/>
+		<!-- 8.Preference -->
+		<jointPoint
+			className="com.eviware.soapui.support.components.SimpleForm"
+			methodName="appendComboBox"
+			descriptor="(Ljava/lang/String;Ljava/util/Map;)Ljavax/swing/JComboBox;"/>
+		<!-- 11.Metric (in Preferences) -->
+		<jointPoint
+			className="com.eviware.soapui.support.components.MetricsPanel"
+			methodName="addSection"/>
+		<jointPoint
+			className="com.eviware.soapui.support.components.MetricsPanel"
+			methodName="getSection"/>
+		<jointPoint
+			className="com.eviware.soapui.support.components.MetricsPanel"
+			methodName="setMetric"
+			descriptor="(Ljava/lang/String;Ljava/lang/String;)Z"/>
+		<!-- 14.Propeyty -->
+		<jointPoint
+			className="com.eviware.soapui.support.components.JPropertiesTable"
+			methodName="addProperty"/>
+		<!-- 15.ProxySetting (in Preferences) -->
+		<jointPoint
+			className="com.eviware.soapui.actions.ProxyPrefs"
+			methodName="createRadioButton"/>
+
+	</pointCut>
+
+	<!-- Normal transration (before, 2nd arg) -->
+	<pointCut editPoint="execution" timing="before">
+		<advice><![CDATA[
+			$2 = ?{translation.class}.translate($2, null);
+		]]></advice>
+
+		<!-- 12.Title (in Project etc.) -->
+		<jointPoint
+			className="com.eviware.soapui.support.UISupport"
+			methodName="addTitledBorder"/>
+		<!-- 13.FontChooser (in Preferences) -->
+		<jointPoint
+			className="com.l2fprod.common.swing.JFontChooser"
+			methodName="showDialog"/>
+
+	</pointCut>
+
+	<pointCut editPoint="execution" timing="before">
+		<advice><![CDATA[
+			$1 = ?{translation.class}.translate($1, null);
+			$2 = ?{translation.class}.translate($2, null);
+		]]></advice>
+
+		<!-- 3.Confirm dialog -->
+		<jointPoint
+			className="com.eviware.x.impl.swing.SwingDialogs"
+			methodName="confirm"/>
+		<jointPoint
+			className="com.eviware.soapui.support.UISupport"
+			methodName="confirm"/>
+		<jointPoint
+			className="com.eviware.soapui.support.UISupport"
+			methodName="prompt"/>
+		<!-- 10.Error dialog -->
+		<jointPoint
+			className="com.eviware.soapui.support.UISupport"
+			methodName="showExtendedInfo"/>
+		<!-- 8.Preference -->
+		<jointPoint
+			className="com.eviware.soapui.support.components.SimpleForm"
+			methodName="appendTextField"/>
+		<jointPoint
+			className="com.eviware.soapui.support.components.SimpleForm"
+			methodName="appendTextArea"/>
+		<jointPoint
+			className="com.eviware.soapui.support.components.SimpleForm"
+			methodName="appendCheckBox"/>
+		<jointPoint
+			className="com.eviware.soapui.support.components.SimpleForm"
+			methodName="appendRadioButton"/>
+		<jointPoint
+			className="com.eviware.soapui.support.components.SimpleForm"
+			methodName="appendPasswordField"/>
+		<!-- 9.TextField HTTPモニター起動でエラーとなるためコメント -->
+		<!-- jointPoint
+			className="com.eviware.x.impl.swing.SwingXFormImpl"
+			methodName="addTextField"/ -->
+
+	</pointCut>
+
+	<!-- 8.Preference -->
+	<pointCut editPoint="execution" timing="before">
+		<advice><![CDATA[
+			$1 = ?{translation.class}.translate($1, null);
+			if ($3 != null)
+				$3 = ?{translation.class}.translate($3, null);
+		]]></advice>
+
+		<jointPoint
+			className="com.eviware.soapui.support.components.SimpleForm"
+			methodName="appendComboBox"
+			descriptor="(Ljava/lang/String;[Ljava/lang/Object;)Ljavax/swing/JComboBox;"/>
+		<jointPoint
+			className="com.eviware.soapui.support.components.SimpleForm"
+			methodName="appendComboBox"
+			descriptor="(Ljava/lang/String;[Ljava/lang/Object;Ljava/lang/String;)Ljavax/swing/JComboBox;"/>
+		<jointPoint
+			className="com.eviware.soapui.support.components.SimpleForm"
+			methodName="appendComboBox"
+			descriptor="(Ljava/lang/String;Ljavax/swing/ComboBoxModel;Ljava/lang/String;)Ljavax/swing/JComboBox;"/>
+
+	</pointCut>
+
+	<!-- 1.MenuBar -->
+	<pointCut editPoint="execution" timing="before">
+		<advice><![CDATA[
+			if ($1.equals("File"))
+				$1 = "ファイル(F)";
+			if ($1.equals("Project"))
+				$1 = "プロジェクト";
+			if ($1.equals("Suite"))
+				$1 = "スイート";
+			if ($1.equals("Case"))
+				$1 = "ケース";
+			if ($1.equals("Step"))
+				$1 = "ステップ";
+			if ($1.equals("Tools"))
+				$1 = "ツール(T)";
+			if ($1.equals("Desktop"))
+				$1 = "デスクトップ(D)";
+			if ($1.equals("Help"))
+				$1 = "ヘルプ(H)";
+		]]></advice>
+
+		<jointPoint
+			className="com.eviware.soapui.support.swing.MenuBuilderHelper"
+			methodName="activateMenuItems"/>
+		<jointPoint
+			className="com.eviware.soapui.support.swing.MenuBuilderHelper"
+			methodName="getMenu"/>
+
+	</pointCut>
+
+	<!-- 1.MenuBar -->
+	<pointCut editPoint="execution" timing="before">
+		<advice><![CDATA[
+			if ($2.getText().equals("File"))
+				$2.setText("ファイル(F)");
+			if ($2.getText().equals("Project"))
+				$2.setText("プロジェクト");
+			if ($2.getText().equals("Suite"))
+				$2.setText("スイート");
+			if ($2.getText().equals("Case"))
+				$2.setText("ケース");
+			if ($2.getText().equals("Step"))
+				$2.setText("ステップ");
+			if ($2.getText().equals("Tools"))
+				$2.setText("ツール(T)");
+			if ($2.getText().equals("Desktop"))
+				$2.setText("デスクトップ(D)");
+			if ($2.getText().equals("Help"))
+				$2.setText("ヘルプ(H)");
+		]]></advice>
+
+		<jointPoint
+			className="com.eviware.soapui.support.action.swing.ActionSupport"
+			methodName="addActions"
+			descriptor="(Lcom/eviware/soapui/support/action/swing/ActionList;Ljavax/swing/JMenu;)Ljavax/swing/JMenu;"/>
+
+	</pointCut>
+
+	<pointCut editPoint="execution" timing="before">
+		<advice><![CDATA[
+//			if ($2.indexOf("(") >= 0)
+//				$2 = ?{translation.class}.translate($2.substring(0, $2.indexOf(" (") - 1), null) + $2.substring($2.indexOf(" ("), $2.length());
+//			if ($2.indexOf("(") < 0)
+				$2 = ?{translation.class}.translate($2, null);
+			$3 = ?{translation.class}.translate($3, null);
+		]]></advice>
+
+		<!-- 4.Inspector -->
+		<jointPoint
+			className="com.eviware.soapui.support.components.JComponentInspector"
+			methodName="JComponentInspector"/>
+
+	</pointCut>
+
+
+	<!--
+	====================================
+	  after advice
+	====================================
+	-->
+
+	<!-- 通常翻訳 (after) -->
+
+	<!--
+    ###########################################################################
+	  For debug
+    ###########################################################################
+	-->
+
+	<!-- Timestamp -->
+	<pointCut editPoint="call" timing="around" level="debug">
+		<advice><![CDATA[
+			?{analyses.class}.start(?{TARGET_STRING});
+			$_ = $proceed($$);
+			?{analyses.class}.end(?{TARGET_STRING});
+		]]></advice>
+
+		<jointPoint className="jp.sourceforge.mergedoc.pleiades"/>
+
+	</pointCut>
+
+	<!-- Debug (before) [joint point] -->
+	<pointCut editPoint="call" timing="around">
+		<advice><![CDATA[
+			?{translation.class}.debug($1, ?{JOINT_POINT});
+			$_ = $proceed($$);
+		]]></advice>
+	</pointCut>
+
+	<!-- Debug (after) [joint point] -->
+	<pointCut editPoint="call" timing="around">
+		<advice><![CDATA[
+			$_ = $proceed($$);
+			?{translation.class}.debug($_, ?{JOINT_POINT});
+		]]></advice>
+	</pointCut>
+
+	<!-- Debug (before-after) [joint point] -->
+	<!--
+	<pointCut editPoint="call" timing="around">
+		<advice><![CDATA[
+			?{translation.class}.debug($1, ?{JOINT_POINT});
+			$_ = $proceed($$);
+			?{translation.class}.debug($_, ?{JOINT_POINT});
+		]]></advice>
+		<jointPoint className="org.eclipse.core.internal.registry.ExtensionsParser"
+			methodName="translate"
+			descriptor="(Ljava/lang/String;)Ljava/lang/String;"/>
+	</pointCut>
+	-->
+
+	<!-- Debug (after) [joint point] -->
+	<!--
+	<pointCut editPoint="call" timing="around">
+		<advice><![CDATA[
+			$_ = $proceed($$);
+			if ($1.toLowerCase().startsWith("preferencekeywords."))
+				?{translation.class}.debug($_, ?{JOINT_POINT}, $1);
+		]]></advice>
+		<jointPoint className="java.util.ResourceBundle" methodName="getString">
+        	<includeWhere className="org.eclipse.core.internal.runtime.ResourceTranslator" methodName="getResourceString"/>
+        </jointPoint>
+	</pointCut>
+	-->
+
+	<!-- Debug (before, no args) -->
+	<pointCut editPoint="execution" timing="before">
+		<advice><![CDATA[
+			?{translation.class}.debug(null, ?{JOINT_POINT});
+		]]></advice>
+	</pointCut>
+
+	<!-- Debug (before, 1st arg) -->
+	<pointCut editPoint="execution" timing="before">
+		<advice><![CDATA[
+			?{translation.class}.debug($1, ?{JOINT_POINT});
+		]]></advice>
+	</pointCut>
+
+	<!-- Debug (before, 2nd arg) -->
+	<pointCut editPoint="execution" timing="before">
+		<advice><![CDATA[
+			?{translation.class}.debug($2, ?{JOINT_POINT});
+		]]></advice>
+	</pointCut>
+
+	<!-- Debug (before, 3rd arg) -->
+	<pointCut editPoint="execution" timing="before">
+		<advice><![CDATA[
+			?{translation.class}.debug($3, ?{JOINT_POINT});
+		]]></advice>
+	</pointCut>
+
+	<!-- Debug (before, 4th arg) -->
+	<pointCut editPoint="execution" timing="before">
+		<advice><![CDATA[
+			?{translation.class}.debug($4, ?{JOINT_POINT});
+		]]></advice>
+	</pointCut>
+
+	<!-- Debug (after) -->
+	<pointCut editPoint="execution" timing="after">
+		<advice><![CDATA[
+			?{translation.class}.debug($_, ?{JOINT_POINT});
+			return $_;
+		]]></advice>
+	</pointCut>
+
+	<!-- Stacktrace (after) -->
+	<pointCut editPoint="execution" timing="after">
+		<advice><![CDATA[
+			?{translation.class}.printStackTrace($_, ?{JOINT_POINT});
+			return $_;
+		]]></advice>
+	</pointCut>
+
+	<!-- Stacktrace (before) -->
+	<pointCut editPoint="execution" timing="before">
+		<advice><![CDATA[
+			?{translation.class}.printStackTrace($1, ?{JOINT_POINT});
+		]]></advice>
+	</pointCut>
+
+	<!--
+    ###########################################################################
+	  Trace (available when pleiades startup option log.level=debug specified)
+    ###########################################################################
+    TraceableTranslationDictionary Reference
+	-->
+
+	<property name="trace.pattern" value=""/>
+	<property name="trace.is.ja" value="false"/>
+
+</pleiades>
