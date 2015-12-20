@@ -41,10 +41,6 @@
 		org.springframework.roo
 		org.springframework.uaa
 		com.mysql.jdbc
-		org.codehaus.groovy.reflection
-		org.codehaus.groovy.runtime.callsite
-		groovy.lang
-		sun.instrument
 
 	</excludePackage>
 
@@ -72,7 +68,10 @@
 		<jointPoint
 			className="com.eviware.soapui.support.types.StringToStringMap"
 			methodName="put">
-			<includeWhere className="com.eviware.soapui.actions.AnnotatedSettings"
+			<excludeWhere className="com.eviware.soapui.impl.wsdl.submit.filters.AbstractRequestFilter"/>
+			<excludeWhere className="com.eviware.soapui.impl.wsdl.submit.filters.HttpRequestFilter"/>
+			<excludeWhere className="com.eviware.soapui.impl.wsdl.submit.filters.RestRequestFilter"/>
+			<!-- includeWhere className="com.eviware.soapui.actions.AnnotatedSettings"
 				methodName="getValues"/>
 			<includeWhere className="com.eviware.soapui.actions.ProxyPrefs"
 				methodName="getValues"/>
@@ -86,12 +85,25 @@
 				methodName="getValues"/>
 			<includeWhere className="com.eviware.soapui.actions.SecurityScansPrefs"
 				methodName="getValues"/>
+			<includeWhere className="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction"/>
+			<includeWhere className="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.LoadTestRunnerAction"/>
+			<includeWhere className="com.eviware.soapui.impl.wsdl.actions.iface.tools.jbossws.WSToolsWsdl2JavaAcAction"/ -->
 		</jointPoint>
 		<!-- 8.Preference -->
 		<jointPoint
 			className="com.eviware.soapui.support.types.StringToStringMap"
 			methodName="get">
-			<includeWhere className="com.eviware.soapui.actions.AnnotatedSettingsPrefs"
+			<excludeWhere className="com.eviware.soapui.impl.wsdl.submit.filters.AbstractRequestFilter"/>
+			<excludeWhere className="com.eviware.soapui.impl.wsdl.submit.filters.HttpRequestFilter"/>
+			<excludeWhere className="com.eviware.soapui.impl.wsdl.submit.filters.RestRequestFilter"/>
+			<excludeWhere className="com.eviware.soapui.config.CrossSiteScriptingScanConfig"/>
+			<excludeWhere className="com.eviware.soapui.config.SecurityScanConfig"/>
+			<excludeWhere className="com.eviware.soapui.config.StrategyTypeConfig"/>
+			<excludeWhere className="com.eviware.soapui.security.scan.AbstractSecurityScan"/>
+			<excludeWhere className="com.eviware.soapui.security.scan.AbstractSecurityScanWithProperties"/>
+			<excludeWhere className="com.eviware.soapui.security.scan.CrossSiteScriptingScan"/>
+			<excludeWhere className="com.eviware.soapui.security.scan.SQLInjectionScan"/>
+			<!-- includeWhere className="com.eviware.soapui.actions.AnnotatedSettingsPrefs"
 				methodName="storeValues"/>
 			<includeWhere className="com.eviware.soapui.actions.ProxyPrefs"
 				methodName="storeValues"/>
@@ -105,6 +117,9 @@
 				methodName="storeValues"/>
 			<includeWhere className="com.eviware.soapui.actions.SecurityScansPrefs"
 				methodName="storeValues"/>
+			<includeWhere className="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction"/>
+			<includeWhere className="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.LoadTestRunnerAction"/>
+			<includeWhere className="com.eviware.soapui.impl.wsdl.actions.iface.tools.jbossws.WSToolsWsdl2JavaAction"/ -->
 		</jointPoint>
 		<!-- 8.Preference -->
 		<jointPoint
@@ -116,7 +131,160 @@
 				methodName="addProxySettingRadioButtons"/>
 			<includeWhere className="com.eviware.soapui.actions.EditorPrefs"
 				methodName="getForm"/>
+			<includeWhere className="com.eviware.soapui.impl.wsdl.panels.teststeps.JdbcRequestTestStepDesktopPanel"
+				methodName="createSimpleJdbcConfigForm"/>
 		</jointPoint>
+
+		<!-- 16.MessageSupport -->
+		<jointPoint
+			className="com.eviware.x.form.XFormDialog"
+			methodName="getValue"/>
+		<jointPoint
+			className="com.eviware.x.form.XFormDialog"
+			methodName="getFormField"/>
+		<jointPoint
+			className="com.eviware.x.form.XFormDialog"
+			methodName="setValue"/>
+		<jointPoint
+			className="com.eviware.x.form.XFormDialog"
+			methodName="setIntValue"/>
+		<jointPoint
+			className="com.eviware.x.form.XFormDialog"
+			methodName="setOptions"/>
+		<jointPoint
+			className="com.eviware.x.form.XForm"
+			methodName="getFormField"/>
+		<jointPoint
+			className="com.eviware.x.form.XForm"
+			methodName="getComponent"/>
+		<jointPoint
+			className="com.eviware.x.form.XForm"
+			methodName="getComponentValue"/>
+		<jointPoint
+			className="com.eviware.x.form.XForm"
+			methodName="setOptions"/>
+		<jointPoint
+			className="com.eviware.x.form.XForm"
+			methodName="addComponent"/>
+		<jointPoint
+			className="com.eviware.x.form.XForm"
+			methodName="addNameSpaceTable"/>
+		<jointPoint
+			className="com.eviware.x.form.XForm"
+			methodName="addSeparator"
+			descriptor="(Ljava/lang/String;)V"/>
+		<jointPoint
+			className="com.eviware.x.impl.swing.JTextAreaFormField"
+			methodName="setToolTip"/>
+		<!-- 17.XFormDialog -->
+		<jointPoint
+			className="com.eviware.x.form.XFormFactory"
+			methodName="createDialogBuilder"/>
+		<!-- 2015/12/12 11.Metric -->
+		<jointPoint
+			className="com.eviware.soapui.support.components.MetricsPanel$MetricsSection"
+			methodName="addMetric"
+			descriptor="(Ljava/lang/String;Lcom/eviware/soapui/support/components/MetricsPanel$MetricType;)Lcom/eviware/soapui/support/components/MetricsPanel$Metric;"/>
+		<!-- 2015/12/12 Progressbar -->
+		<jointPoint
+			className="javax.swing.JProgressBar"
+			methodName="setString"/>
+		<!-- 2015/12/12 Progressbar -->
+		<jointPoint
+			className="com.eviware.x.impl.swing.JFormDialog"
+			methodName="getFormField"/>
+
+	</pointCut>
+
+	<pointCut editPoint="call" timing="around">
+		<advice><![CDATA[
+			String i = "";
+			String o = "";
+			if ($1.getClass().getSimpleName().equals("JLabel"))
+				i = ((javax.swing.JLabel)$1).getText();
+			if (!i.equals(""))
+				o = ?{translation.class}.translate(i, null);
+			if (!o.equals(""))
+				((javax.swing.JLabel)$1).setText(o);
+			$_ = $proceed($$);
+		]]></advice>
+
+		<!-- 16.MessageSupport -->
+		<jointPoint
+			className="com.jgoodies.forms.builder.ButtonBarBuilder"
+			methodName="addFixed"/>
+		<!-- 2015/12/13 Forum, Trial -->
+		<jointPoint
+			className="com.eviware.soapui.support.components.JXToolBar"
+			methodName="addFixed"/>
+
+	</pointCut>
+
+	<pointCut editPoint="call" timing="around">
+		<advice><![CDATA[
+			String s = (String) $1.getValue(javax.swing.Action.NAME);
+			$1.putValue(javax.swing.Action.NAME, ?{translation.class}.translate(s, null));
+			$_ = $proceed($$);
+		]]></advice>
+
+		<!-- 2015/12/12 Show Config button -->
+		<jointPoint
+			className="com.eviware.soapui.support.action.swing.ActionList"
+			methodName="addAction"/>
+
+	</pointCut>
+
+	<pointCut editPoint="call" timing="around">
+		<advice><![CDATA[
+			$1.setText(?{translation.class}.translate($1.getText(), null));
+			$_ = $proceed($$);
+		]]></advice>
+
+		<!-- 2015/12/12 -->
+		<jointPoint
+			className="javax.swing.JLabel"
+			methodName="addAction">
+			<includeWhere className="com.eviware.soapui.impl.wsdl.panels.teststeps.GroovyScriptStepDesktopPanel" methodName="buildToolbar"/>
+		</jointPoint>
+
+	</pointCut>
+
+	<pointCut editPoint="call" timing="around">
+		<advice><![CDATA[
+			$1 = ?{translation.class}.translate($1, null);
+			$2 = ?{translation.class}.translate($2, null);
+			$_ = $proceed($$);
+		]]></advice>
+
+		<!-- 16.MessageSupport -->
+		<jointPoint
+			className="com.eviware.x.form.XForm"
+			methodName="addTextField"/>
+		<jointPoint
+			className="com.eviware.x.form.XForm"
+			methodName="addCheckBox"/>
+		<!-- jointPoint
+			className="com.eviware.soapui.impl.wsdl.actions.iface.tools.support.AbstractToolsAction"
+			methodName="AbstractToolsAction"
+			descriptor="(Ljava/lang/String;Ljava/lang/String;)V"/ -->
+
+	</pointCut>
+
+	<pointCut editPoint="call" timing="around">
+		<advice><![CDATA[
+			$1 = ?{translation.class}.translate($1, null);
+			$3 = ?{translation.class}.translate($3, null);
+			$_ = $proceed($$);
+		]]></advice>
+
+		<!-- 16.MessageSupport -->
+		<jointPoint
+			className="com.eviware.x.form.XForm"
+			methodName="addComboBox"/>
+		<!-- 2015/12/12 XDialog progress -->
+		<jointPoint
+			className="com.eviware.x.dialogs.XDialogs"
+			methodName="createProgressDialog"/>
 
 	</pointCut>
 
@@ -129,8 +297,13 @@
 		<!-- 11.Metric (in Preferences) -->
 		<jointPoint
 			className="com.eviware.soapui.support.components.MetricsPanel$MetricsSection"
-			methodName="addMetric"/>
+			methodName="addMetric"
+			descriptor="(Ljavax/swing/ImageIcon;Ljava/lang/String;Lcom/eviware/soapui/support/components/MetricsPanel$MetricType;)Lcom/eviware/soapui/support/components/MetricsPanel$Metric;"/>
 			<!-- descriptor="(Ljavax/swing/ImageIcon;Ljava/lang/String;)Z"/ -->
+		<!-- 17.XFormDialog -->
+		<jointPoint
+			className="com.eviware.x.form.XFormDialogBuilder"
+			methodName="buildDialog"/>
 
 	</pointCut>
 
@@ -216,6 +389,8 @@
 		<jointPoint className="com.eviware.soapui.impl.wsdl.endpoint.DefaultEndpointStrategyConfigurationPanel$AddAction" methodName="putValue"/>
 		<jointPoint className="com.eviware.soapui.impl.wsdl.endpoint.DefaultEndpointStrategyConfigurationPanel$AssignAction" methodName="putValue"/>
 		<jointPoint className="com.eviware.soapui.impl.wsdl.endpoint.DefaultEndpointStrategyConfigurationPanel$DeleteAction" methodName="putValue"/>
+
+		<jointPoint className="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction" methodName="putValue"/>
 
 		<jointPoint className="com.eviware.soapui.impl.wsdl.loadtest.assertions.AbstractLoadTestAssertion$RenameAssertionAction" methodName="putValue"/>
 		<jointPoint className="com.eviware.soapui.impl.wsdl.loadtest.assertions.AbstractLoadTestAssertion$ConfigureAssertionAction" methodName="putValue"/>
@@ -430,6 +605,8 @@
 
 		<jointPoint className="com.eviware.soapui.RecentItemsListener$ClearProjectsAction" methodName="putValue"/>
 		<jointPoint className="com.eviware.soapui.RecentItemsListener$ClearWorkspacesAction" methodName="putValue"/>
+		<!-- 2015/12/12 Launch button -->
+		<jointPoint className="javax.swing.Action" methodName="putValue"/>
 		<!-- jointPoint className="javax.swing.AbstractAction" methodName="putValue"/ -->
 	
 	</pointCut>
@@ -483,6 +660,55 @@
 		<jointPoint
 			className="com.eviware.soapui.actions.ProxyPrefs"
 			methodName="createRadioButton"/>
+		<!-- 16.MessageSupport -->
+		<!-- jointPoint
+			className="com.eviware.x.impl.swing.JFormDialog"
+			methodName="getValue"/>
+		<jointPoint
+			className="com.eviware.x.impl.swing.JFormDialog"
+			methodName="getFormField"/>
+		<jointPoint
+			className="com.eviware.x.impl.swing.JFormDialog"
+			methodName="setValue"/>
+		<jointPoint
+			className="com.eviware.x.impl.swing.JTabbedFormDialog"
+			methodName="getValue"/>
+		<jointPoint
+			className="com.eviware.x.impl.swing.JTabbedFormDialog"
+			methodName="getFormField"/>
+		<jointPoint
+			className="com.eviware.x.impl.swing.JTabbedFormDialog"
+			methodName="setValue"/>
+		<jointPoint
+			className="com.eviware.x.impl.swing.JWizardDialog"
+			methodName="getValue"/>
+		<jointPoint
+			className="com.eviware.x.impl.swing.JWizardDialog"
+			methodName="getFormField"/>
+		<jointPoint
+			className="com.eviware.x.impl.swing.JWizardDialog"
+			methodName="setValue"/ -->
+		<!-- jointPoint
+			className="com.eviware.x.impl.swing.SwingXFormDialog"
+			methodName="getValue"/>
+		<jointPoint
+			className="com.eviware.x.impl.swing.SwingXFormDialog"
+			methodName="getFormField"/>
+		<jointPoint
+			className="com.eviware.x.impl.swing.SwingXFormDialog"
+			methodName="setValue"/ -->
+		<!-- 2015/12/12 testConnection -->
+		<jointPoint
+			className="com.eviware.soapui.support.components.SimpleForm"
+			methodName="appendButton"/>
+		<!-- 2015/12/12 -->
+		<jointPoint
+			className="com.eviware.soapui.support.components.JXToolBar"
+			methodName="addLabeledFixed"/>
+		<!-- 2015/12/13 Options -->
+		<jointPoint
+			className="com.eviware.soapui.support.components.StringListFormComponent"
+			methodName="StringListFormComponent"/>
 
 	</pointCut>
 
@@ -515,9 +741,6 @@
 			methodName="confirm"/>
 		<jointPoint
 			className="com.eviware.soapui.support.UISupport"
-			methodName="confirm"/>
-		<jointPoint
-			className="com.eviware.soapui.support.UISupport"
 			methodName="prompt"/>
 		<!-- 10.Error dialog -->
 		<jointPoint
@@ -539,10 +762,29 @@
 		<jointPoint
 			className="com.eviware.soapui.support.components.SimpleForm"
 			methodName="appendPasswordField"/>
+		<jointPoint
+			className="com.eviware.soapui.support.components.SimpleBindingForm"
+			methodName="appendComponent"/>
 		<!-- 9.TextField HTTPモニター起動でエラーとなるためコメント -->
 		<!-- jointPoint
 			className="com.eviware.x.impl.swing.SwingXFormImpl"
 			methodName="addTextField"/ -->
+
+	</pointCut>
+
+	<pointCut editPoint="execution" timing="before">
+		<advice><![CDATA[
+//			if (($1.length() > 17) && $1.substring(0, 17).equals("Delete TestStep ["))
+//				$1 = $1.replace("Delete TestStep", "テストステップ").replace("from Testcase", "をテストケース") + "から削除しますか";
+//			if (($1.length() <= 17) || !$1.substring(0, 17).equals("Delete TestStep ["))
+				$1 = ?{translation.class}.translate($1, null);
+			$2 = ?{translation.class}.translate($2, null);
+		]]></advice>
+
+		<!-- 3.Confirm dialog -->
+		<jointPoint
+			className="com.eviware.soapui.support.UISupport"
+			methodName="confirm"/>
 
 	</pointCut>
 
@@ -643,6 +885,34 @@
 
 	</pointCut>
 
+	<pointCut editPoint="execution" timing="before">
+		<advice><![CDATA[
+			$3 = ?{translation.class}.translate($3, null);
+			$4 = ?{translation.class}.translate($4, null);
+		]]></advice>
+
+		<!-- 2015/12/12 Description -->
+		<jointPoint
+			className="com.eviware.soapui.support.components.JFocusableComponentInspector"
+			methodName="JFocusableComponentInspector"/>
+
+	</pointCut>
+
+	<pointCut editPoint="execution" timing="before">
+		<advice><![CDATA[
+			if ($1.equals("Forum") || $1.equals("Trial")) {
+				$1 = ?{translation.class}.translate($1, null);
+				$3 = ?{translation.class}.translate($3, null);
+			}
+		]]></advice>
+
+		<jointPoint className="com.eviware.soapui.impl.support.actions.ShowOnlineHelpAction"
+			methodName="ShowOnlineHelpAction"
+			descriptor="(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V"/>
+
+	</pointCut>
+
+
 
 	<!--
 	====================================
@@ -650,7 +920,51 @@
 	====================================
 	-->
 
-	<!-- 通常翻訳 (after) -->
+	<pointCut editPoint="execution" timing="after">
+		<advice><![CDATA[
+			$_ = ?{translation.class}.translate($_, null);
+		]]></advice>
+
+		<!-- 16.MessageSupport -->
+		<jointPoint
+			className="com.eviware.soapui.support.MessageSupport"
+			methodName="get"/>
+
+	</pointCut>
+
+	<pointCut editPoint="execution" timing="after">
+		<advice><![CDATA[
+			if ($_ == null) return $_;
+			$_ = ?{translation.class}.translate($_, ?{JOINT_POINT});
+		]]></advice>
+
+		<!-- jointPoint
+			className="com.eviware.soapui.actions.SecurityScansPrefs"
+			methodName="getTitle"/ -->
+		<jointPoint
+			className="com.eviware.soapui.impl.wsdl.actions.iface.tools.support.NamespaceTable$NamespaceTableModel"
+			methodName="getColumnName"/>
+		<jointPoint
+			className="com.eviware.soapui.impl.wsdl.panels.teststeps.support.DefaultPropertyHolderTableModel"
+			methodName="getColumnName"/>
+		<!-- jointPoint
+			className="com.eviware.soapui.actions.SecurityScansPrefs$DefaultPropertyHolderTableModel"
+			methodName="getColumnName"/>
+		<jointPoint
+			className="com.eviware.soapui.impl.wsdl.panels.project.WSSTabPanel$OutgoingWssTableModel"
+			methodName="getColumnName"/>
+		<jointPoint
+			className="com.eviware.soapui.impl.wsdl.panels.project.WSSTabPanel$IncomingWssTableModel"
+			methodName="getColumnName"/>
+		<jointPoint
+			className="com.eviware.soapui.impl.wsdl.panels.project.WSSTabPanel$CryptoTableModel"
+			methodName="getColumnName"/ -->
+		<!-- jointPoint
+			className="javax.swing.table.AbstractTableModel"
+			methodName="getColumnName"/ -->
+
+	</pointCut>
+
 
 	<!--
     ###########################################################################
